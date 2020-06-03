@@ -46,10 +46,14 @@ class SqliteDb:
         try:
             c.execute('''INSERT INTO users
                       VALUES (NULL,?,?,?,?,?,?,?)
-                      ''', user)
+                      ''', (user.first_name, user.last_name,
+                            user.days_used, user.total_vacation_days,
+                            user.birth_date, user.entry_date, user.status,
+                            )
+                      )
             self.db.commit()
         except Exception as e:
-            print(f'User {user[0]} {user[1]} already exists. Error: {e}')
+            print(f'User {user.first_name} {user.last_name} already exists. Error: {e}')
 
 
     def rm_user(self, user=None):
@@ -60,7 +64,8 @@ class SqliteDb:
         c = self.db.cursor()
         c.execute('''DELETE FROM users
                   WHERE first_name == ? AND last_name == ?
-                  ''', user)
+                  ''', (user.first_name, user.last_name,)
+                  )
         self.db.commit()
 
 
@@ -85,12 +90,18 @@ class SqliteDb:
                           WHERE (SELECT id
                                  FROM users
                                  WHERE first_name == ? AND last_name == ?)
-                          ''', (user[0], user[1], user[2], user[3], user[4], user[5], user[6], user[0], user[1],))
+                          ''', (user.first_name, user.last_name,
+                                user.days_used, user.total_vacation_days,
+                                user.birth_date, user.entry_date, user.status,
+
+                                user.first_name, user.last_name,
+                                )
+                          )
             else:
                 print("Not a full row.")
                 return
         except Exception as e:
-            print(f'Could not update user {user[0]} {user[1]}. Error: {e}')
+            print(f'Could not update user {user.first_name} {user.last_name}. Error: {e}')
         self.db.commit()
 
 
@@ -105,14 +116,17 @@ class SqliteDb:
 
 
 if __name__ == "__main__":
+    from user import User
     db = SqliteDb()
-    user = ('Esdrubal', 'Corno', 0, 22, '1990-05-02', '2020-02-01', 'active')
-    db.add_user(user)
+    u1 = User('John', 'Doe', '1990-05-02', '2020-02-01')
+    db.add_user(u1)
     print(db.db.cursor().execute("SELECT * FROM users").fetchall())
-    user = ('Esdrubal', 'Corno', 7, 22, '1990-05-02', '2020-02-01', 'inactive')
-    db.update_user(user)
+
+    u1.total_vacation_days = 27
+    u1.status = 'inactive'
+    db.update_user(u1)
     print(db.db.cursor().execute("SELECT * FROM users").fetchall())
-    user = ('Esdrubal', 'Corno')
-    db.rm_user(user)
+
+    db.rm_user(u1)
     print(db.db.cursor().execute("SELECT * FROM users").fetchall())
 

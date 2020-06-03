@@ -8,7 +8,7 @@ class Vacations:
     __legal_interlude = timedelta(days=180) # Has override option but is negotiable
     __first_year_total_vacation_days = 20   # By law, but is negotiable
     total_vacation_days = 22    # Minimum by law
-    used_vacation_days = 0
+    days_used = 0
     is_first_year = True
 
     def __init__(self, first_year=True, total_days=22, override=False):
@@ -31,15 +31,16 @@ class Vacations:
 
     def __repr__(self):
         return {'total days': self.total_vacation_days,
-                'days used': self.used_vacation_days,
+                'days used': self.days_used,
                 'is first year': self.is_first_year
                 }
 
     # The front end will only allow half-days and full-days
     def request_day_off(self, num_days, req_date, override=False):
         if req_date < self.__start_date:
-            print(f'Cannot schedule days off before entry date: {self.__start_date.strftime("%Y-%m-%d %H:%M")}')
-            return
+            if not override:
+                print(f'Cannot schedule days off before entry date: {self.__start_date.strftime("%Y-%m-%d %H:%M")}')
+                return
 
         if (req_date - self.__start_date) < self.__legal_interlude:
             if not override:
@@ -47,13 +48,13 @@ class Vacations:
                 print(f'Cannot schedule before {self.__start_date.strftime("%Y-%m-%d %H:%M")} without authorization')
                 return
 
-        if num_days > self.total_vacation_days - self.used_vacation_days:
-            print(f'Cannot schedule more than {self.total_vacation_days - self.used_vacation_days} days')
+        if num_days > self.total_vacation_days - self.days_used:
+            print(f'Cannot schedule more than {self.total_vacation_days - self.days_used} days')
             return
 
         # TODO: Write to DB
         print(f'Scheduled {num_days} days from {req_date} to {req_date+timedelta(num_days)}')
-        self.used_vacation_days += num_days
+        self.days_used += num_days
 
     def remove_days_off(self, from_date, to_date):
         # TODO: Remove from DB the days requested

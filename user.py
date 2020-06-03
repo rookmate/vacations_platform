@@ -22,7 +22,8 @@ class User(Vacations):
                 }
 
 
-
 if __name__ == "__main__":
-    u1 = User('Esdrubal', 'Petra', '1990-05-08', '2020-02-01', "Tue", 22, True)
+    from datetime import datetime
+    u1 = User('Jane', 'Doe', '1990-05-08', '2020-02-01', "Tue", 22, True)
     print(u1.__repr__())
+    u1.request_day_off(num_days=3.5, req_date=datetime(2020, 5, 8), override=True)
