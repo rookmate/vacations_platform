@@ -6,6 +6,12 @@ __pycache__/
 # C extensions
 *.so
 
+# VIm swaps
+*.swp
+
+# SQLite Database
+*.db
+
 # Distribution / packaging
 .Python
 build/
