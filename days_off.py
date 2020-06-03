@@ -27,7 +27,13 @@ class Vacations:
 
         self.total_vacation_days = total_days
         self.is_first_year = first_year
-        print(f'{self.total_vacation_days} vacation days available.')
+
+
+    def __repr__(self):
+        return {'total days': self.total_vacation_days,
+                'days used': self.used_vacation_days,
+                'is first year': self.is_first_year
+                }
 
     # The front end will only allow half-days and full-days
     def request_day_off(self, num_days, req_date, override=False):
@@ -58,5 +64,7 @@ if __name__ == "__main__":
     old = datetime(2020, 8, 5)
     print(old)
     regular = Vacations()
+    print(regular.__repr__())
     regular.request_day_off(num_days=3.5, req_date=old, override=True)
     regular.remove_days_off("Chuck", "Testa")
+    print(regular.__repr__())
